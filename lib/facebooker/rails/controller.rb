@@ -130,6 +130,10 @@ module Facebooker
       end
 
       def secure_with_cookies!
+	  secure_with_old_style_cookies! || secure_with_new_style_cookies!
+      end
+
+	def secure_with_old_style_cookies!
           parsed = {}
 
           fb_cookie_names.each { |key| parsed[key[fb_cookie_prefix.size,key.size]] = cookies[key] }
@@ -144,7 +148,29 @@ module Facebooker
           @facebook_session.secure_with!(parsed['session_key'],parsed['user'],parsed['expires'],parsed['ss'])
           @facebook_session
       end
-    
+      
+ 	def secure_with_new_style_cookies!
+	  parsed = {}
+
+        return unless app_id = ENV['FACEBOOK_APP_ID']
+        return unless fb_cookie_new = cookies["fbs_#{app_id}"]
+	  fb_cookie_new = fb_cookie_new[1, fb_cookie_new.length-2]
+	  fb_cookie_new.split('&').each do |str|
+	    key, val = str.split('=')
+	    parsed[key] = val
+	  end
+		
+	  return unless parsed['session_key'] && parsed['uid'] && parsed['expires'] && parsed['secret'] && parsed['sig']
+	  return unless (Time.at(parsed['expires'].to_s.to_f) > Time.now) || (parsed['expires'] == "0")      
+
+	  #if we have the unexpired cookies, we'll throw an exception if the sig doesn't verify	  
+        verify_signature(parsed, parsed.delete('sig'), true)
+
+        @facebook_session = new_facebook_session
+        @facebook_session.secure_with!(parsed['session_key'],parsed['uid'],parsed['expires'],parsed['secret'])
+        @facebook_session
+	end
+
       def secure_with_token!
         if params['auth_token']
           @facebook_session = new_facebook_session
