@@ -24,8 +24,8 @@ class FooControllerTest < ActionController::TestCase
     expected_session_key = '1234'
     expected_expires = (Time.now + 100000).to_i.to_s
     expected_secret = '234'
-    expected_access_token = 'mock-access-token'
-    expected_base_domain = 'mock-base-domain'
+    expected_access_token = '120843857929094%7C2.ajT42K4m7n_u668NE_mvYQ__.3600.1271898000-216743%7Cbe913fezYRUUCEjvja28KZiTe0w.'
+    expected_base_domain = 'testing.com'
 
     cookie_params = {
 	:access_token => expected_access_token,
