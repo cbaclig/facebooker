@@ -48,7 +48,7 @@ module Facebooker
       end
       Thread.current[:fb_api_config] = @raw_facebooker_configuration unless Thread.current[:fb_api_config]
       apply_configuration(@raw_facebooker_configuration)
-    end
+    end 
 
     # Sets the Facebook environment based on a hash of options. 
     # By default the hash passed in is loaded from facebooker.yml, but it can also be passed in
@@ -170,7 +170,7 @@ module Facebooker
       @timeout
     end
 
-    [:api_key,:secret_key, :www_server_base_url,:login_url_base,:install_url_base,:permission_url_base,:connect_permission_url_base,:api_rest_path,:api_server_base,:api_server_base_url,:canvas_server_base, :video_server_base].each do |delegated_method|
+    [:app_id, :api_key,:secret_key, :www_server_base_url,:login_url_base,:install_url_base,:permission_url_base,:connect_permission_url_base,:api_rest_path,:api_server_base,:api_server_base_url,:canvas_server_base, :video_server_base].each do |delegated_method|
       define_method(delegated_method){ return current_adapter.send(delegated_method)}
     end
 

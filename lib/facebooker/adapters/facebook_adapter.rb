@@ -23,6 +23,10 @@ module Facebooker
       "/restserver.php"
     end
     
+    def app_id
+      ENV['FACEBOOK_APP_ID'] || super  
+    end
+    
     def api_key
       ENV['FACEBOOK_API_KEY'] || super      
     end
