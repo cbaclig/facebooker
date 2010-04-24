@@ -366,6 +366,27 @@ class RailsIntegrationTest < Test::Unit::TestCase
     assert_equal(10, @controller.facebook_session.user.id)    
   end
   
+  def test_existing_secured_session_is_NOT_used_if_available_and_DOES_NOT_matches_any_fb_cookies
+    uid = 111
+    cookie_params = {
+      :access_token => 'n/a',
+      :base_domain => 'n/a',
+      :expires => '9999999999',
+      :secret => 'n/a',
+      :session_key => 'n/a',
+      :uid => (uid+1).to_s
+    }
+    cookie = %Q{"#{cookie_params.map{|args| args.join('=') }.join('&')}"}
+    key = "fbs_#{Facebooker.app_id}"
+    @request.cookies[key] = cookie
+    
+    session = Facebooker::Session.create(Facebooker::Session.api_key, Facebooker::Session.secret_key)
+    session.secure_with!("session_key", uid.to_s, Time.now.to_i + 60)
+    
+    @controller.expects(:secure_with_new_style_cookies!).returns(Facebooker::Session.create(Facebooker::Session.api_key, Facebooker::Session.secret_key))
+    get :index, {}, {:facebook_session => session}
+  end
+  
   def test_existing_secured_session_is_used_if_available
     session = Facebooker::Session.create(Facebooker::Session.api_key, Facebooker::Session.secret_key)
     session.secure_with!("session_key", "111", Time.now.to_i + 60)

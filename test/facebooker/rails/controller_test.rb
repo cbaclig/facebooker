@@ -28,12 +28,12 @@ class FooControllerTest < ActionController::TestCase
     expected_base_domain = 'testing.com'
 
     cookie_params = {
-	:access_token => expected_access_token,
-	:base_domain => expected_base_domain,
-	:expires => expected_expires,
-	:secret => expected_secret,
-	:session_key => expected_session_key,
-	:uid => expected_uid
+    	:access_token => expected_access_token,
+    	:base_domain => expected_base_domain,
+    	:expires => expected_expires,
+    	:secret => expected_secret,
+    	:session_key => expected_session_key,
+    	:uid => expected_uid
     }
 	
     raw_string = cookie_params.map{ |*args| args.join('=') }.sort.join
@@ -49,6 +49,5 @@ class FooControllerTest < ActionController::TestCase
     @request.cookies[key] = cookie
     get :index
   end
-
 end
 
